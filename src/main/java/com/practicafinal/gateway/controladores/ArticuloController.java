@@ -95,7 +95,7 @@ public class ArticuloController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/articulos/{id}")
+    @GetMapping("/api/articulos/{id}")
     public ResponseEntity<Articulo> buscarPorId(@PathVariable Long id) {
 
         HttpEntity<Long> request = new HttpEntity<>(id);
@@ -106,7 +106,7 @@ public class ArticuloController {
         return new ResponseEntity<>(exchange.getBody(), HttpStatus.OK);
     }
 
-    @GetMapping("/articulos/cantidad")
+    @GetMapping("/api/articulos/cantidad")
     public ResponseEntity<Long> contarArticulos() {
 
         ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8081/articulos/cantidad", HttpMethod.GET, null, Long.class);
