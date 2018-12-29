@@ -36,7 +36,7 @@ public class ClienteController {
 
         HttpEntity<Cliente> request = new HttpEntity<>(cliente);
         ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/", HttpMethod.POST, request, Cliente.class);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(exchange.getStatusCode());
     }
 
     @RequestMapping(value = "/api/clientes", method = RequestMethod.PUT, consumes = "application/json")
@@ -46,7 +46,7 @@ public class ClienteController {
 
         ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/", HttpMethod.PUT, request, Cliente.class);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(exchange.getStatusCode());
     }
 
     @RequestMapping(value = "/api/clientes", method = RequestMethod.DELETE, consumes = "application/json")
@@ -56,7 +56,7 @@ public class ClienteController {
 
         ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8082/clientes/", HttpMethod.DELETE, request, Long.class);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(exchange.getStatusCode());
     }
 
 

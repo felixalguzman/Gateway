@@ -45,7 +45,7 @@ public class ArticuloController {
 
         ResponseEntity<Articulo> exchange = restTemplate.exchange("http://localhost:8081/articulos/", HttpMethod.POST, request, Articulo.class);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(exchange.getStatusCode());
     }
 
     @RequestMapping(value = "/api/articulos", method = RequestMethod.PUT, consumes = "application/json")
@@ -55,7 +55,7 @@ public class ArticuloController {
 
         ResponseEntity<Articulo> exchange = restTemplate.exchange("http://localhost:8081/articulos/", HttpMethod.PUT, request, Articulo.class);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(exchange.getStatusCode());
     }
 
     @RequestMapping(value = "/api/articulos", method = RequestMethod.DELETE, consumes = "application/json")
@@ -65,7 +65,7 @@ public class ArticuloController {
 
         ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8081/articulos/", HttpMethod.DELETE, request, Long.class);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(exchange.getStatusCode());
     }
 
     @RequestMapping(value = "/api/articulos/comprar", method = RequestMethod.PUT, params = {"id", "cantidad"})
@@ -83,16 +83,16 @@ public class ArticuloController {
     }
 
     @RequestMapping(value = "/api/articulos/paginacion", method = RequestMethod.GET, params = {"limit", "offset"}, produces = {"application/json"})
-    public ResponseEntity<Articulo> articulosPaginacion(@RequestParam("limit") int limit, @RequestParam("offset") int offset) {
+    public ResponseEntity<List<Articulo>> articulosPaginacion(@RequestParam("limit") int limit, @RequestParam("offset") int offset) {
 
         String url = "http://localhost:8081/articulos/paginacion";
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
                 .queryParam("limit", limit)
                 .queryParam("offset", offset);
 
-        restTemplate.put(builder.toUriString(), null);
+        ResponseEntity<List<Articulo>> lista = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, null, new ParameterizedTypeReference<List<Articulo>>(){});
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(lista.getBody(), HttpStatus.OK);
     }
 
     @GetMapping("/api/articulos/{id}")
