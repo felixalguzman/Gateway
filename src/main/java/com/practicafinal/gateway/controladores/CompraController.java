@@ -2,12 +2,13 @@ package com.practicafinal.gateway.controladores;
 
 import java.util.List;
 
+import com.practicafinal.gateway.entidades.Cliente;
 import com.practicafinal.gateway.entidades.Compra;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class CompraController {
 
     private RestTemplate restTemplate = new RestTemplate();
+
+    @Autowired
+    private ClienteController clienteController;
 
     @GetMapping(value="/api/compra")
     public ResponseEntity<List<Compra>> listarCompras() {
@@ -46,7 +50,7 @@ public class CompraController {
 
 
 
-    @GetMapping(value = "/compras/",  params = {"limit", "offset"})
+    @GetMapping(value = "api/compras/paginacion",  params = {"limit", "offset"})
     public ResponseEntity<List<Compra>> comprasPorPaginacion(@RequestParam("limit") int limit, @RequestParam("offset") int offset) {
         
         String url = "http://localhost:8085/compras/paginacion";
@@ -55,6 +59,23 @@ public class CompraController {
                 .queryParam("offset", offset);
 
         ResponseEntity<List<Compra>> lista = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, null, new ParameterizedTypeReference<List<Compra>>(){});
+
+
+        return new ResponseEntity<>(lista.getBody(), lista.getStatusCode());
+    }
+
+    @GetMapping(value = "api/compras/paginacion/cliente/{cliente}",  params = {"limit", "offset"})
+    public ResponseEntity<List<Compra>> comprasPorPaginacionCliente(@RequestParam("limit") int limit, @RequestParam("offset") int offset, @PathVariable Long cliente) {
+        
+        Cliente cliente2 = clienteController.buscarPorId(cliente).getBody();
+        HttpEntity<Cliente> request = new HttpEntity<>(cliente2);
+
+        String url = "http://localhost:8085/compras/paginacion";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
+                .queryParam("limit", limit)
+                .queryParam("offset", offset);
+
+        ResponseEntity<List<Compra>> lista = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, request , new ParameterizedTypeReference<List<Compra>>(){});
 
 
         return new ResponseEntity<>(lista.getBody(), lista.getStatusCode());
