@@ -92,7 +92,7 @@ public class ArticuloController {
 
         ResponseEntity<List<Articulo>> lista = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, null, new ParameterizedTypeReference<List<Articulo>>(){});
 
-        return new ResponseEntity<>(lista.getBody(), HttpStatus.OK);
+        return new ResponseEntity<>(lista.getBody(), lista.getStatusCode());
     }
 
     @GetMapping("/api/articulos/{id}")
