@@ -49,7 +49,7 @@ public class ArticuloController {
         return new ResponseEntity<>(exchange.getStatusCode());
     }
 
-    @RequestMapping(value = "/api/articulos", method = RequestMethod.PUT, consumes = "application/json")
+    @RequestMapping(value = "/api/articulos", method = RequestMethod.PUT)
     public ResponseEntity<Articulo> actualizar(@RequestBody Articulo articulo) {
 
         HttpEntity<Articulo> request = new HttpEntity<>(articulo);
@@ -60,12 +60,12 @@ public class ArticuloController {
         return new ResponseEntity<>(exchange.getStatusCode());
     }
 
-    @RequestMapping(value = "/api/articulos", method = RequestMethod.DELETE, consumes = "application/json")
-    public ResponseEntity<Articulo> borrar(@RequestParam("id") Long id) {
+    @RequestMapping(value = "/api/articulos/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Articulo> borrar(@PathVariable Long id) {
 
         HttpEntity<Long> request = new HttpEntity<>(id);
 
-        ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8081/articulos/", HttpMethod.DELETE,
+        ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8081/articulos/?id="+id, HttpMethod.DELETE,
                 request, Long.class);
 
         return new ResponseEntity<>(exchange.getStatusCode());

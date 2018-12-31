@@ -64,7 +64,7 @@ public class ClienteController {
         return new ResponseEntity<>(exchange.getStatusCode());
     }
 
-    @RequestMapping(value = "/api/clientes", method = RequestMethod.DELETE, consumes = "application/json")
+    @RequestMapping(value = "/api/clientes", method = RequestMethod.DELETE)
     public ResponseEntity<Cliente> borrar(@RequestParam("id") Long id) {
 
         HttpEntity<Long> request = new HttpEntity<>(id);
