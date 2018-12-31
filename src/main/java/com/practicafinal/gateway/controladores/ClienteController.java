@@ -44,6 +44,15 @@ public class ClienteController {
         return new ResponseEntity<>(exchange.getStatusCode());
     }
 
+    @RequestMapping(value="/api/clientes/devolver", method = RequestMethod.GET, consumes = "application/json")
+    public ResponseEntity<Cliente> devolverNuevoCliente(@RequestBody Cliente cliente){
+        HttpEntity<Cliente> request = new HttpEntity<>(cliente);
+        // System.out.println("nombre: " + cliente.getNombre());
+        ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/devolver", HttpMethod.GET,
+                request, Cliente.class);
+        return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
+    }
+
     @RequestMapping(value = "/api/clientes", method = RequestMethod.PUT, consumes = "application/json")
     public ResponseEntity<Cliente> actualizar(@RequestBody Cliente cliente) {
 
