@@ -1,6 +1,8 @@
 package com.practicafinal.gateway.controladores;
 
 import com.practicafinal.gateway.entidades.Cliente;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -14,101 +16,108 @@ import java.util.List;
 @RestController()
 public class ClienteController {
 
-    private RestTemplate restTemplate = new RestTemplate();
+        private RestTemplate restTemplate = new RestTemplate();
 
-    @GetMapping(value = "/api/clientes/todos", produces = { "application/json" })
-    public ResponseEntity<List<Cliente>> listar() {
-        ResponseEntity<List<Cliente>> listResponseEntity = restTemplate.exchange("http://localhost:8082/clientes",
-                HttpMethod.GET, null, new ParameterizedTypeReference<List<Cliente>>() {
+        @Autowired
+        private CorreoController correocontroller;
 
-                });
-        System.out.println("cod:" + listResponseEntity.getStatusCode());
-        return new ResponseEntity<>(listResponseEntity.getBody(), HttpStatus.OK);
-    }
+        @GetMapping(value = "/api/clientes/todos", produces = { "application/json" })
+        public ResponseEntity<List<Cliente>> listar() {
+                ResponseEntity<List<Cliente>> listResponseEntity = restTemplate.exchange(
+                                "http://localhost:8082/clientes", HttpMethod.GET, null,
+                                new ParameterizedTypeReference<List<Cliente>>() {
 
-    @GetMapping(value = "/api/clientes/nombre/{nombre}")
-    public ResponseEntity<List<Cliente>> clientesPorNombre(@PathVariable String nombre) {
-        ResponseEntity<List<Cliente>> listResponseEntity = restTemplate.exchange(
-                "http://localhost:8082/clientes/nombre/" + nombre, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Cliente>>() {
-                });
-        return new ResponseEntity<>(listResponseEntity.getBody(), HttpStatus.OK);
-    }
+                                });
+                System.out.println("cod:" + listResponseEntity.getStatusCode());
+                return new ResponseEntity<>(listResponseEntity.getBody(), HttpStatus.OK);
+        }
 
-    @PostMapping(value = "/api/clientes", consumes = "application/json")
-    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
+        @GetMapping(value = "/api/clientes/nombre/{nombre}")
+        public ResponseEntity<List<Cliente>> clientesPorNombre(@PathVariable String nombre) {
+                ResponseEntity<List<Cliente>> listResponseEntity = restTemplate.exchange(
+                                "http://localhost:8082/clientes/nombre/" + nombre, HttpMethod.GET, null,
+                                new ParameterizedTypeReference<List<Cliente>>() {
+                                });
+                return new ResponseEntity<>(listResponseEntity.getBody(), HttpStatus.OK);
+        }
 
-        HttpEntity<Cliente> request = new HttpEntity<>(cliente);
-        ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/", HttpMethod.POST,
-                request, Cliente.class);
-        return new ResponseEntity<>(exchange.getStatusCode());
-    }
+        @PostMapping(value = "/api/clientes", consumes = "application/json")
+        public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
 
-    @RequestMapping(value="/api/clientes/devolver", method = RequestMethod.POST)
-    public ResponseEntity<Cliente> devolverNuevoCliente(@RequestBody Cliente cliente){
-        HttpEntity<Cliente> request = new HttpEntity<>(cliente);
-        // System.out.println("nombre: " + cliente.getNombre());
-        ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/devolver", HttpMethod.POST,
-                request, Cliente.class);
-        return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
-    }
+                HttpEntity<Cliente> request = new HttpEntity<>(cliente);
+                ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/",
+                                HttpMethod.POST, request, Cliente.class);
+                return new ResponseEntity<>(exchange.getStatusCode());
+        }
 
-    @RequestMapping(value = "/api/clientes", method = RequestMethod.PUT, consumes = "application/json")
-    public ResponseEntity<Cliente> actualizar(@RequestBody Cliente cliente) {
+        @RequestMapping(value = "/api/clientes/devolver", method = RequestMethod.POST)
+        public ResponseEntity<Cliente> devolverNuevoCliente(@RequestBody Cliente cliente) {
+                HttpEntity<Cliente> request = new HttpEntity<>(cliente);
+                // System.out.println("nombre: " + cliente.getNombre());
+                ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/devolver",
+                                HttpMethod.POST, request, Cliente.class);
 
-        HttpEntity<Cliente> request = new HttpEntity<>(cliente);
+                restTemplate.exchange("http://localhost:8088/correo/nuevoCliente", HttpMethod.GET, request,
+                                Cliente.class);
+                return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
+        }
 
-        ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/", HttpMethod.PUT,
-                request, Cliente.class);
+        @RequestMapping(value = "/api/clientes", method = RequestMethod.PUT, consumes = "application/json")
+        public ResponseEntity<Cliente> actualizar(@RequestBody Cliente cliente) {
 
-        return new ResponseEntity<>(exchange.getStatusCode());
-    }
+                HttpEntity<Cliente> request = new HttpEntity<>(cliente);
 
-    @RequestMapping(value = "/api/clientes", method = RequestMethod.DELETE)
-    public ResponseEntity<Cliente> borrar(@RequestParam("id") Long id) {
+                ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/",
+                                HttpMethod.PUT, request, Cliente.class);
 
-        HttpEntity<Long> request = new HttpEntity<>(id);
+                return new ResponseEntity<>(exchange.getStatusCode());
+        }
 
-        ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8082/clientes/", HttpMethod.DELETE,
-                request, Long.class);
+        @RequestMapping(value = "/api/clientes", method = RequestMethod.DELETE)
+        public ResponseEntity<Cliente> borrar(@RequestParam("id") Long id) {
 
-        return new ResponseEntity<>(exchange.getStatusCode());
-    }
+                HttpEntity<Long> request = new HttpEntity<>(id);
 
-    @RequestMapping(value = "/api/cliente/paginacion", method = RequestMethod.GET, params = { "limit",
-            "offset" }, produces = { "application/json" })
-    public ResponseEntity<Cliente> clientesPaginacion(@RequestParam("limit") int limit,
-            @RequestParam("offset") int offset) {
+                ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8082/clientes/",
+                                HttpMethod.DELETE, request, Long.class);
 
-        String url = "http://localhost:8082/clientes/paginacion";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("limit", limit)
-                .queryParam("offset", offset);
+                return new ResponseEntity<>(exchange.getStatusCode());
+        }
 
-        ResponseEntity<Cliente> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null,
-                new ParameterizedTypeReference<Cliente>() {
-                });
+        @RequestMapping(value = "/api/cliente/paginacion", method = RequestMethod.GET, params = { "limit",
+                        "offset" }, produces = { "application/json" })
+        public ResponseEntity<Cliente> clientesPaginacion(@RequestParam("limit") int limit,
+                        @RequestParam("offset") int offset) {
 
-        return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
-    }
+                String url = "http://localhost:8082/clientes/paginacion";
+                UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("limit", limit)
+                                .queryParam("offset", offset);
 
-    @GetMapping("/api/clientes/{id}")
-    public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
+                ResponseEntity<Cliente> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+                                null, new ParameterizedTypeReference<Cliente>() {
+                                });
 
-        HttpEntity<Long> request = new HttpEntity<>(id);
+                return new ResponseEntity<>(responseEntity.getBody(), responseEntity.getStatusCode());
+        }
 
-        ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/" + id, HttpMethod.GET,
-                request, Cliente.class);
+        @GetMapping("/api/clientes/{id}")
+        public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
 
-        return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
-    }
+                HttpEntity<Long> request = new HttpEntity<>(id);
 
-    @GetMapping("/api/clientes/cantidad")
-    public ResponseEntity<Long> contarClientes() {
+                ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/" + id,
+                                HttpMethod.GET, request, Cliente.class);
 
-        ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8082/clientes/cantidad", HttpMethod.GET,
-                null, Long.class);
+                return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
+        }
 
-        return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
-    }
+        @GetMapping("/api/clientes/cantidad")
+        public ResponseEntity<Long> contarClientes() {
+
+                ResponseEntity<Long> exchange = restTemplate.exchange("http://localhost:8082/clientes/cantidad",
+                                HttpMethod.GET, null, Long.class);
+
+                return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
+        }
 
 }

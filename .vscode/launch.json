@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Gateway",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.practicafinal.gateway.GatewayApplication",
+            "projectName": "gateway",
+            "args": ""
+        }
+    ]
+}
