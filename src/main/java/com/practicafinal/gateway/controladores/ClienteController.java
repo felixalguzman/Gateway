@@ -57,8 +57,8 @@ public class ClienteController {
                 ResponseEntity<Cliente> exchange = restTemplate.exchange("http://localhost:8082/clientes/devolver",
                                 HttpMethod.POST, request, Cliente.class);
 
-                restTemplate.exchange("http://localhost:8088/correo/nuevoCliente", HttpMethod.GET, request,
-                                Cliente.class);
+                // restTemplate.exchange("http://localhost:8088/correo/nuevoCliente", HttpMethod.GET, request,
+                //                 Cliente.class);
                 return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
         }
 
