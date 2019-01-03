@@ -4,6 +4,6 @@ LABEL maintainer="Ansel Corona <anselcorona@gmail.com>"
 
 EXPOSE 8080
 
-COPY clientes-0.0.1-SNAPSHOT.jar finalclientes.jar
+COPY gateway-0.0.1-SNAPSHOT.jar gateway.jar
 
-ENTRYPOINT ["java", "-jar", "finalclientes.jar"]
+ENTRYPOINT ["java", "-jar", "gateway.jar"]
