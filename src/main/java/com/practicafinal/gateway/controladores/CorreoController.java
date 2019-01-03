@@ -22,15 +22,14 @@ public class CorreoController {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-
     @PostMapping("/nuevo")
     public ResponseEntity enviarCorreo(@RequestBody Cliente cliente) {
-        
+
         HttpEntity<Cliente> request = new HttpEntity<>(cliente);
-        ResponseEntity<Cliente> exchange = restTemplate.exchange("http://drand.me:8088/correo/nuevoCliente", HttpMethod.POST,
-                request, Cliente.class);
+        ResponseEntity<Cliente> exchange = restTemplate.exchange("http://drand.me:8088/correo/nuevoCliente",
+                HttpMethod.POST, request, Cliente.class);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
 }

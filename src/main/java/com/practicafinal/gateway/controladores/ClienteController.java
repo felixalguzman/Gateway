@@ -28,6 +28,7 @@ public class ClienteController {
                                 new ParameterizedTypeReference<List<Cliente>>() {
 
                                 });
+
                 System.out.println("cod:" + listResponseEntity.getStatusCode());
                 return new ResponseEntity<>(listResponseEntity.getBody(), HttpStatus.OK);
         }
@@ -48,6 +49,7 @@ public class ClienteController {
                 ResponseEntity<Cliente> exchange = restTemplate.exchange("http://drand.me:8082/clientes/",
                                 HttpMethod.POST, request, Cliente.class);
                 return new ResponseEntity<>(exchange.getStatusCode());
+                
         }
 
         @RequestMapping(value = "/api/clientes/devolver", method = RequestMethod.POST)

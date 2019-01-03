@@ -35,6 +35,7 @@ public class ArticuloController {
                 new ParameterizedTypeReference<List<Articulo>>() {
                 });
 
+
         return new ResponseEntity<>(listResponseEntity.getBody(), HttpStatus.OK);
     }
 
@@ -45,6 +46,7 @@ public class ArticuloController {
 
         ResponseEntity<Articulo> exchange = restTemplate.exchange("http://drand.me:8081/articulos/", HttpMethod.POST,
                 request, Articulo.class);
+
 
         return new ResponseEntity<>(exchange.getStatusCode());
     }
@@ -57,6 +59,7 @@ public class ArticuloController {
         ResponseEntity<Articulo> exchange = restTemplate.exchange("http://drand.me:8081/articulos/", HttpMethod.PUT,
                 request, Articulo.class);
 
+
         return new ResponseEntity<>(exchange.getStatusCode());
     }
 
@@ -67,6 +70,7 @@ public class ArticuloController {
 
         ResponseEntity<Long> exchange = restTemplate.exchange("http://drand.me:8081/articulos/?id="+id, HttpMethod.DELETE,
                 request, Long.class);
+                
 
         return new ResponseEntity<>(exchange.getStatusCode());
     }

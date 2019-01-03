@@ -30,53 +30,57 @@ public class CompraController {
     @Autowired
     private ClienteController clienteController;
 
-    @GetMapping(value="/api/compra")
+    @GetMapping(value = "/api/compra")
     public ResponseEntity<List<Compra>> listarCompras() {
-        
-        ResponseEntity<List<Compra>> listResponseEntity = restTemplate.exchange("http://drand.me:8085/compras", HttpMethod.GET, null, new ParameterizedTypeReference<List<Compra>>() {});
+
+        ResponseEntity<List<Compra>> listResponseEntity = restTemplate.exchange("http://drand.me:8085/compras",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<Compra>>() {
+                });
 
         return new ResponseEntity<>(listResponseEntity.getBody(), listResponseEntity.getStatusCode());
     }
 
     @PostMapping("/api/compra")
-    public ResponseEntity<Compra> crearCompra(@RequestBody Compra compra){
-        
+    public ResponseEntity<Compra> crearCompra(@RequestBody Compra compra) {
+
         HttpEntity<Compra> request = new HttpEntity<>(compra);
 
-        ResponseEntity<Compra> exchange = restTemplate.exchange("http://drand.me:8085/compras", HttpMethod.POST, request, Compra.class);
+        ResponseEntity<Compra> exchange = restTemplate.exchange("http://drand.me:8085/compras", HttpMethod.POST,
+                request, Compra.class);
 
         return new ResponseEntity<>(exchange.getStatusCode());
+
     }
 
+    @GetMapping(value = "api/compras/paginacion", params = { "limit", "offset" })
+    public ResponseEntity<List<Compra>> comprasPorPaginacion(@RequestParam("limit") int limit,
+            @RequestParam("offset") int offset) {
 
-
-    @GetMapping(value = "api/compras/paginacion",  params = {"limit", "offset"})
-    public ResponseEntity<List<Compra>> comprasPorPaginacion(@RequestParam("limit") int limit, @RequestParam("offset") int offset) {
-        
         String url = "http://drand.me:8085/compras/paginacion";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
-                .queryParam("limit", limit)
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("limit", limit)
                 .queryParam("offset", offset);
 
-        ResponseEntity<List<Compra>> lista = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, null, new ParameterizedTypeReference<List<Compra>>(){});
-
+        ResponseEntity<List<Compra>> lista = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<Compra>>() {
+                });
 
         return new ResponseEntity<>(lista.getBody(), lista.getStatusCode());
     }
 
-    @GetMapping(value = "api/compras/paginacion/cliente/{cliente}",  params = {"limit", "offset"})
-    public ResponseEntity<List<Compra>> comprasPorPaginacionCliente(@RequestParam("limit") int limit, @RequestParam("offset") int offset, @PathVariable Long cliente) {
-        
+    @GetMapping(value = "api/compras/paginacion/cliente/{cliente}", params = { "limit", "offset" })
+    public ResponseEntity<List<Compra>> comprasPorPaginacionCliente(@RequestParam("limit") int limit,
+            @RequestParam("offset") int offset, @PathVariable Long cliente) {
+
         Cliente cliente2 = clienteController.buscarPorId(cliente).getBody();
         HttpEntity<Cliente> request = new HttpEntity<>(cliente2);
 
         String url = "http://drand.me:8085/compras/paginacion";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url)
-                .queryParam("limit", limit)
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("limit", limit)
                 .queryParam("offset", offset);
 
-        ResponseEntity<List<Compra>> lista = restTemplate.exchange(builder.toUriString(),HttpMethod.GET, request , new ParameterizedTypeReference<List<Compra>>(){});
-
+        ResponseEntity<List<Compra>> lista = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, request,
+                new ParameterizedTypeReference<List<Compra>>() {
+                });
 
         return new ResponseEntity<>(lista.getBody(), lista.getStatusCode());
     }
@@ -86,11 +90,11 @@ public class CompraController {
 
         HttpEntity<Long> request = new HttpEntity<>(id);
 
-        ResponseEntity<Compra> exchange = restTemplate.exchange("http://drand.me:8085/compras/" + id, HttpMethod.GET, request, Compra.class);
+        ResponseEntity<Compra> exchange = restTemplate.exchange("http://drand.me:8085/compras/" + id, HttpMethod.GET,
+                request, Compra.class);
 
         return new ResponseEntity<>(exchange.getBody(), exchange.getStatusCode());
-        
+
     }
 
-    
 }
